@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Virtual Heritage Tour Makassar</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
+
+    <!-- A-Frame -->
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-event-set-component@5.0.0/dist/aframe-event-set-component.min.js"></script>
+
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        font-family: "Poppins", sans-serif;
+        background: #e8f1ff;
+      }
+
+      /* --- INTRO SCREEN --- */
+      #intro {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    linear-gradient(135deg, rgba(59, 130, 246, 0.6), rgba(147, 197, 253, 0.6)),
+    url('assets/makassarcity.jpeg') center/cover no-repeat;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  z-index: 100;
+  animation: fadeOut 1.5s ease 3s forwards;
+  backdrop-filter: brightness(0.9);
+}
+
+      #intro h1 {
+        font-size: 2rem;
+        margin-bottom: 10px;
+        letter-spacing: 1px;
+      }
+      #intro p {
+        opacity: 0.9;
+        font-size: 1rem;
+      }
+      @keyframes fadeOut {
+        to {
+          opacity: 0;
+          visibility: hidden;
+        }
+      }
+
+      /* --- MENU --- */
+      #menu {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        z-index: 10;
+        background: rgba(255, 255, 255, 0.92);
+        padding: 14px 18px;
+        border-radius: 14px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+      }
+      #menu button {
+        background: #3b82f6;
+        border: none;
+        color: white;
+        padding: 8px 14px;
+        margin: 5px 4px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+        transition: 0.3s;
+      }
+      #menu, #infoBox, #intro, #fadeOverlay {
+        position: absolute;
+        z-index: 1000 !important;
+        color: #111 !important;
+      }
+
+      /* Info box pojok kiri bawah */
+#infoBox {
+  position: absolute;
+  bottom: 30px;
+  left: 30px;
+  background: rgba(255,255,255,0.9);
+  color: #111 !important;
+  padding: 16px 20px;
+  border-radius: 12px;
+  max-width: 320px;
+  width: fit-content;
+  text-align: left;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  transform: translateY(20px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+  z-index: 1000;
+}
+
+/* Saat ditampilkan */
+#infoBox.show {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Judul dan teks dalam infoBox */
+#infoBox h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+      #infoBox p {
+        margin-top: 6px;
+        font-size: 0.95rem;
+        line-height: 1.4;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+      }
+
+      #infoBox button {
+        background: #3b82f6;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-top: 8px;
+      }
+      #infoBox button:hover {
+        background: #2563eb;
+      }
+
+      /* --- FADE EFFECT --- */
+      #fadeOverlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #e8f1ff;
+        opacity: 0;
+        transition: opacity 0.8s ease;
+        z-index: 9;
+        pointer-events: none;
+      }
+      #fadeOverlay.show {
+        opacity: 1;
+      }
+    </style>
+  </head>
+
+<body>
+  <!-- Intro Screen -->
+  <div id="intro">
+    <h1>Virtual Heritage Tour Makassar</h1>
+    <p>Menjelajahi Keajaiban Sejarah Kota Daeng</p>
+  </div>
+
+  <!-- Overlay untuk Transisi -->
+  <div id="fadeOverlay"></div>
+
+  <!-- Menu Navigasi -->
+  <div id="menu">
+    <button onclick="showScene('rotterdam')">Benteng Rotterdam</button>
+    <button onclick="showScene('lagaligo')">Museum La Galigo</button>
+    <button onclick="showScene('mandala')">Monumen Mandala</button>
+    <button onclick="showScene('kota')">Museum Kota</button>
+    <button onclick="showScene('korban')">Monumen 40.000 Jiwa</button>
+  </div>
+
+ /* --- TOMBOL INFO --- */
+#infoButton {
+  position: absolute;
+  bottom: 25px;
+  left: 25px;
+  font-size: 22px;
+  background: #3b82f6;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 50%;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+#infoButton:hover {
+  background: #2563eb;
+  transform: scale(1.1);
+}
+
+  <!-- Popup Info -->
+  <div id="infoBox">
+    <h3 id="infoTitle"></h3>
+    <p id="infoText"></p>
+    <button id="readMoreBtn">Baca Selengkapnya</button>
+  </div>
+
+  <!-- A-Frame Scene -->
+  <a-scene>
+    <a-assets>
+      <img id="rotterdam" src="assets/bentengrotterdam.jpg" />
+      <img id="lagaligo" src="assets/lagaligo.jpg" />
+      <img id="mandala" src="assets/monumenmandala.jpg" />
+      <img id="kota" src="assets/museumkotamakassar.jpg" />
+      <img id="korban" src="assets/40.000jiwa.jpg" />
+      <audio id="bgmusic" src="assets/bg-music.mp3" autoplay loop></audio>
+    </a-assets>
+
+    <a-entity id="camera" camera look-controls position="0 1.6 0"></a-entity>
+    <a-sky id="sky" src="#rotterdam"></a-sky>
+  </a-scene>
+
+  <script>
+    const info = {
+      rotterdam: {
+        title: "Benteng Rotterdam",
+        text: "Benteng bersejarah peninggalan Kerajaan Gowa-Tallo, kini menjadi ikon sejarah dan budaya Makassar.",
+        link: "https://id.wikipedia.org/wiki/Benteng_Rotterdam"
+      },
+      lagaligo: {
+        title: "Museum La Galigo",
+        text: "Museum ini menyimpan koleksi sejarah dan budaya Sulawesi Selatan, termasuk peninggalan kerajaan Bugis-Makassar.",
+        link: "https://id.wikipedia.org/wiki/Museum_La_Galigo"
+      },
+      mandala: {
+        title: "Monumen Mandala",
+        text: "Monumen perjuangan pembebasan Irian Barat yang menjadi simbol semangat nasionalisme rakyat Sulawesi Selatan.",
+        link: "https://id.wikipedia.org/wiki/Monumen_Mandala"
+      },
+      kota: {
+        title: "Museum Kota Makassar",
+        text: "Bangunan tua bekas balai kota ini kini menjadi museum yang menampilkan sejarah perkembangan kota Makassar.",
+        link: "https://www.google.com/search?q=Museum+Kota+Makassar"
+      },
+      korban: {
+        title: "Monumen Korban 40.000 Jiwa",
+        text: "Monumen untuk mengenang ribuan korban pada masa penumpasan DI/TII, menjadi simbol perjuangan dan pengorbanan rakyat.",
+        link: "https://www.detik.com/sulsel/berita/d-7083572/sejarah-korban-40-000-jiwa-westerling-di-sulsel-kontroversi-makna-di-baliknya"
+      },
+    };
+
+    const box = document.getElementById("infoBox");
+    const infoBtn = document.getElementById("infoButton");
+    const readMoreBtn = document.getElementById("readMoreBtn");
+
+    function showScene(place) {
+      const overlay = document.getElementById("fadeOverlay");
+      overlay.classList.add("show");
+
+      setTimeout(() => {
+        document.querySelector("#sky").setAttribute("src", "#" + place);
+        showInfo(place);
+        overlay.classList.remove("show");
+      }, 800);
+    }
+
+    function showInfo(place) {
+      const data = info[place];
+      box.style.transition = "opacity 0.6s ease";
+      box.style.opacity = "0";
+
+      setTimeout(() => {
+        document.getElementById("infoTitle").innerText = data.title;
+        document.getElementById("infoText").innerText = data.text;
+        readMoreBtn.onclick = () => window.open(data.link, "_blank");
+
+        box.classList.add("show");
+        box.style.opacity = "1";
+      }, 600);
+    }
+
+    function toggleInfo() {
+      if (box.classList.contains("show")) {
+        box.classList.remove("show");
+      } else {
+        box.classList.add("show");
+      }
+    }
+
+    // Hilangkan intro setelah 3.5 detik
+    setTimeout(() => {
+      document.getElementById("intro").style.display = "none";
+    }, 3500);
+  </script>
+</body>
+
+</html>
